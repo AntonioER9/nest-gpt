@@ -39,7 +39,7 @@ export const orthographyCheckUseCase = async (openai: OpenAI, options: Options) 
         content: prompt,
       }
     ],
-    model: "gpt-3.5-turbo-1106",
+    model: "gpt-3.5-turbo",
     temperature: 0.3,
     max_tokens: 150,
     response_format: {
