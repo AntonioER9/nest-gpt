@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 
 import { orthographyCheckUseCase, prosConsDicusserStreamUseCase, prosConsDicusserUseCase } from './use-cases';
-import { OrthographyDto } from './dtos';
-import { ProsConsDiscusserDto } from 'src/gpt/dtos/pros-cons-discusser.dto';
+import { OrthographyDto, ProsConsDiscusserDto } from './dtos';
 
 @Injectable()
 export class GptService {
