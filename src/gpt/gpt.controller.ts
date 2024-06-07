@@ -2,12 +2,12 @@ import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import { GptService } from './gpt.service';
-import { OrthographyDto, ProsConsDiscusserDto } from './dtos';
+import { OrthographyDto, ProsConsDiscusserDto, TranslateDto } from './dtos';
 
 @Controller('gpt')
 export class GptController {
 
-  constructor(private readonly gptService: GptService) {}
+  constructor(private readonly gptService: GptService) { }
 
 
   @Post('orthography-check')
@@ -30,13 +30,13 @@ export class GptController {
     @Body() prosConsDiscusserDto: ProsConsDiscusserDto,
     @Res() res: Response,
   ) {
-
     const stream = await this.gptService.prosConsDicusserStream(prosConsDiscusserDto);
-  
-    res.setHeader('Content-Type', 'application/json');
-    res.status( HttpStatus.OK );
 
-    for await( const chunk of stream ) { //
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(HttpStatus.OK);
+
+    for await (const chunk of stream) {
       const piece = chunk.choices[0].delta.content || '';
       // console.log(piece);
       res.write(piece);
@@ -44,6 +44,14 @@ export class GptController {
 
     res.end();
 
+  }
+
+
+  @Post('translate')
+  translateText(
+    @Body() translateDto: TranslateDto,
+  ) {
+    return this.gptService.translateText(translateDto);
   }
 
 
