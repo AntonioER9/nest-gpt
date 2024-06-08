@@ -8,6 +8,7 @@ import OpenAI from 'openai';
 import {
   audioToTextUseCase,
   imageGenerationUseCase,
+  imageToTextUseCase,
   imageVariationUseCase,
   orthographyCheckUseCase,
   prosConsDicusserStreamUseCase,
@@ -24,7 +25,6 @@ import {
   TextToAudioDto,
   TranslateDto,
 } from './dtos';
-
 
 @Injectable()
 export class GptService {
@@ -84,10 +84,8 @@ export class GptService {
   }
 
   getGeneratedImage(fileName: string) {
-
     const filePath = path.resolve('./', './generated/images/', fileName);
     const exists = fs.existsSync(filePath);
-
 
     if (!exists) {
       throw new NotFoundException('File not found');
@@ -96,9 +94,11 @@ export class GptService {
     return filePath;
   }
 
-
   async geneateImageVariation({ baseImage }: ImageVariationDto) {
     return imageVariationUseCase(this.openai, { baseImage });
   }
 
+  async imageToText(imageFile: Express.Multer.File, prompt: string) {
+    return await imageToTextUseCase(this.openai, { imageFile, prompt });
+  }
 }

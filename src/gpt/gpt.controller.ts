@@ -127,16 +127,48 @@ export class GptController {
   }
 
   @Get('image-generation/:filename')
-  async getGenerated(@Res() res: Response, @Param('filename') fileName: string) {
+  async getGenerated(
+    @Res() res: Response,
+    @Param('filename') fileName: string,
+  ) {
     const filePath = this.gptService.getGeneratedImage(fileName);
     res.status(HttpStatus.OK);
     res.sendFile(filePath);
   }
-
 
   @Post('image-variation')
   async imageVariation(@Body() imageVariationDto: ImageVariationDto) {
     return await this.gptService.geneateImageVariation(imageVariationDto);
   }
 
+  @Post('extract-text-from-image')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './generated/uploads',
+        filename: (req, file, callback) => {
+          const fileExtension = file.originalname.split('.').pop();
+          const fileName = `${new Date().getTime()}.${fileExtension}`;
+          return callback(null, fileName);
+        },
+      }),
+    }),
+  )
+  async extractTextFromImage(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 1000 * 1024 * 5,
+            message: 'File is bigger than 5 mb ',
+          }),
+          new FileTypeValidator({ fileType: 'image/*' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @Body('prompt') prompt: string,
+  ) {
+    return this.gptService.imageToText(file, prompt);
+  }
 }

@@ -11,7 +11,6 @@ export class SamAssistantService {
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-
   async createThread() {
     return await createThreadUseCase(this.openai);
   }
@@ -29,6 +28,5 @@ export class SamAssistantService {
 
     return messages;
   }
-
 
 }
